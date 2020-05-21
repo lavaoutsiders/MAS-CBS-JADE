@@ -14,7 +14,7 @@ public class OrderAgentButton extends JButton implements AgentButton {
 
 
     public static int getBoxLength(){
-        return 45;
+        return 50;
     }
 
     public void setStatus(StatusEnum status) {

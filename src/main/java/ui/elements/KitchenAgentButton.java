@@ -6,11 +6,13 @@ import ui.StatusEnum;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-public class ChefAgentButton extends JButton implements AgentButton {
+public class KitchenAgentButton extends JButton implements AgentButton {
 
 
-    public ChefAgentButton(int i, int j){
-        this.setBorder(BorderFactory.createTitledBorder("Chef"));
+    public KitchenAgentButton(int i, int j, String title){
+        this.setBorder(BorderFactory.createTitledBorder(title));
+        this.setLocation(i, j);
+        this.setSize(getBoxWidth(), getBoxHeight());
     }
 
     public void setStatus(StatusEnum status) {
@@ -19,7 +21,7 @@ public class ChefAgentButton extends JButton implements AgentButton {
     }
 
     public static int getBoxWidth() {
-        return 40;
+        return 70;
     }
     public static int getBoxHeight() {
         return 50;

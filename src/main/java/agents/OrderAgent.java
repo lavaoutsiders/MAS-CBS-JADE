@@ -10,6 +10,6 @@ public class OrderAgent extends Agent implements IOrderAgent {
 
 
     public void sendNewOrder() {
-
+        System.out.println("Order agent submitted a new order");
     }
 }
