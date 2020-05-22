@@ -46,10 +46,15 @@ public abstract class BaseAgent extends Agent {
         }
     }
 
-    protected MessageTemplate getContractCFPTemplate() {
+    protected MessageTemplate getContractNetTemplate(int performative) {
         return MessageTemplate.and(
-                MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET),
-                MessageTemplate.MatchPerformative(ACLMessage.CFP) );
+                getContractNetTemplate(),
+                MessageTemplate.MatchPerformative(performative) );
+    }
+
+    protected MessageTemplate getContractNetTemplate() {
+        return MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+
     }
 
 }

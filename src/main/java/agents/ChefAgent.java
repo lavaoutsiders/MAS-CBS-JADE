@@ -2,6 +2,7 @@ package agents;
 
 import com.google.common.collect.Sets;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
@@ -88,5 +89,12 @@ public class ChefAgent extends BaseAgent implements IChefAgent {
 
     public ChefAgent() {
         super(Sets.newHashSet(TaskEnum.KNEED_RICE, TaskEnum.CUT_FISH));
+        this.addBehaviour(new ChefAgentResponderBehaviour(this, getContractNetTemplate()));
+//        this.addBehaviour(new ChefAgentInitiatorBehaviour(this, ));
+    }
+
+    @Override
+    public int calculateAgentScore(int x, int y) {
+        return 0;
     }
 }
