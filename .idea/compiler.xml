@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="MAS-CBS-JADE" target="1.5" />
+      <module name="MAS-CBS-JADE" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
