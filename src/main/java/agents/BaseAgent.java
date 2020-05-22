@@ -6,6 +6,9 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.domain.FIPANames;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +30,7 @@ public abstract class BaseAgent extends Agent {
 
         try {
             DFService.register(this, agentDescription);
+            System.out.println("REGISTER - " + this.getName() + " registered.");
         } catch (FIPAException e) {
             e.printStackTrace();
         }
@@ -36,10 +40,16 @@ public abstract class BaseAgent extends Agent {
     protected void takeDown() {
         try {
             DFService.deregister(this);
+            System.out.println("DEREGISTER - " + this.getName() + " deregistered.");
         } catch (FIPAException e) {
             e.printStackTrace();
         }
     }
 
+    protected MessageTemplate getContractCFPTemplate() {
+        return MessageTemplate.and(
+                MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET),
+                MessageTemplate.MatchPerformative(ACLMessage.CFP) );
+    }
 
 }
