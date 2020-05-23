@@ -1,21 +1,22 @@
 package agents;
 
 import com.google.common.collect.Sets;
-import jade.core.AID;
+import com.google.common.collect.Streams;
 import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
+import main.MainController;
+import main.MainControllerImpl;
+import models.Coordinate;
 import models.ItemsEnum;
 import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 import utils.DFUtils;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 class OrderAgentInitiatorBehaviour extends ContractNetInitiator {
 
@@ -25,7 +26,7 @@ class OrderAgentInitiatorBehaviour extends ContractNetInitiator {
 
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
-        super.handlePropose(propose, acceptances);
+        System.out.println("PROPOSE - Agent " + propose.getSender().getName() + " proposed with value: " + propose.getContent());
     }
 
     @Override
@@ -35,25 +36,48 @@ class OrderAgentInitiatorBehaviour extends ContractNetInitiator {
 
     @Override
     protected void handleRefuse(ACLMessage refuse) {
-        super.handleRefuse(refuse);
+        System.out.println("REFUSE - Agent " + refuse.getSender().getName() + " refused the task :( ");
     }
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        super.handleInform(inform);
+        System.out.println("INFORM - Agent " + inform.getSender().getName() + " successfully performed the task");
     }
 
     @Override
     protected void handleAllResponses(Vector responses, Vector acceptances) {
-        super.handleAllResponses(responses, acceptances);
+
+        Spliterator<ACLMessage> iterator = responses.spliterator();
+        Optional<ACLMessage> bestOffer = StreamSupport.stream(iterator, false)
+                .filter(msg-> msg.getPerformative() == ACLMessage.PROPOSE)
+                .min((msg1, msg2) -> (int) (Double.parseDouble(msg1.getContent()) - Double.parseDouble(msg2.getContent())));
+        if (! bestOffer.isPresent()) {
+            System.out.println("! No agent is able to handle the order.");
+            return;
+        }
+        ACLMessage bestReply = bestOffer.get().createReply();
+        bestReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+        acceptances.add(bestReply);
+        iterator = responses.spliterator();
+        iterator.forEachRemaining(aclMessage -> {
+            if (aclMessage != bestOffer.get()) {
+                ACLMessage reply = aclMessage.createReply();
+                reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                acceptances.add(reply);
+            }
+        });
+
     }
 }
 
 public class OrderAgent extends BaseAgent implements IOrderAgent {
 
 
-    public OrderAgent() {
-        super(Sets.newHashSet(TaskEnum.RECEIVE_ORDER));
+
+    public OrderAgent(@NotNull MainController mainController, @NotNull Coordinate coordinate) {
+        super(mainController, Sets.newHashSet(TaskEnum.RECEIVE_ORDER),
+                coordinate);
+
     }
 
     public void submitNewOrder(ItemsEnum itemsEnum) {
@@ -61,11 +85,16 @@ public class OrderAgent extends BaseAgent implements IOrderAgent {
         message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
         message.setReplyByDate(getReplyDeadline());
         message.setContent(itemsEnum.toString());
-
+        try {
+            message.setContentObject(OrderAgent.this.getCoordinate());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Objects.requireNonNull(
                 DFUtils.searchDF(TaskEnum.START_ORDER.toString(), OrderAgent.this))
                 .forEach(message::addReceiver);
-        send(message);
+        this.addBehaviour(new OrderAgentInitiatorBehaviour(this, message));
         System.out.println("Order agent submitted a new order with item " + itemsEnum.toString());
+
     }
 }

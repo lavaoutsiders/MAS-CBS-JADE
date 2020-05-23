@@ -4,16 +4,13 @@ import agents.ChefAgent;
 import agents.KitchenHelperAgent;
 import agents.OrderAgent;
 import jade.core.Agent;
-import main.MainController;
-import models.ItemsEnum;
+import main.MainControllerImpl;
+import models.Coordinate;
 import org.jetbrains.annotations.NotNull;
 import ui.elements.KitchenAgentButton;
 import ui.elements.OrderAgentButton;
-import ui.views.SelectItemView;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,9 +21,9 @@ import java.util.Set;
 public class GUI {
 
     private JFrame mainFrame;
-    private MainController mainController;
+    private MainControllerImpl mainController;
 
-    public GUI(@NotNull MainController mainController) {
+    public GUI(@NotNull MainControllerImpl mainController) {
         this.mainController = mainController;
         JFrame mainFrame = new JFrame("Conveyor belt sushi multi-agent simulation");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,6 +35,7 @@ public class GUI {
         addOrderAgents(mainFrame, 100, 100);
         Map<KitchenAgentButton, Agent> agentButtonChefAgentMap = addKitchenAgents(mainFrame, 180, 180);
         mainFrame.setVisible(true);
+        this.mainFrame = mainFrame;
     }
 
     private Map<KitchenAgentButton, Agent> addKitchenAgents(@NotNull JFrame mainFrame, int startX, int startY) {
@@ -53,24 +51,25 @@ public class GUI {
                 Agent agent;
                 String prefix;
                 int count;
+                Coordinate coordinate = new Coordinate(startX + i * KitchenAgentButton.getBoxWidth() * 2 ,
+                        startY + j * KitchenAgentButton.getBoxHeight() * 2);
                 if (helperRobotColumn.contains(i)) {
-                    agent = new KitchenHelperAgent();
+                    agent = new KitchenHelperAgent(this.mainController, coordinate);
                     prefix = "Helper ";
                     count = kitchenHelperCount;
                     kitchenHelperCount++;
                 }
                 else {
-                    agent = new ChefAgent();
+                    agent = new ChefAgent(this.mainController, coordinate);
                     prefix = "Chef ";
                     count = chefCount;
                     chefCount++;
                 }
                 String agentName = prefix + count;
-                this.mainController.registerAgent(agentName, agent);
                 KitchenAgentButton kitchenAgentButton = new KitchenAgentButton(
-                        startX + i * KitchenAgentButton.getBoxWidth() * 2 ,
-                        startY + j * KitchenAgentButton.getBoxHeight() * 2, agentName
-                );
+                        coordinate.getX(), coordinate.getY(), agentName);
+                this.mainController.registerAgent(agentName, agent, kitchenAgentButton);
+
                 kitchenAgentButton.setStatus(StatusEnum.IDLE);
                 mainFrame.add(kitchenAgentButton);
                 result.put(kitchenAgentButton, agent);
@@ -89,14 +88,16 @@ public class GUI {
                     continue;
                 }
                 String agentName = "OrderAgent " + count;
-                OrderAgent orderAgent = new OrderAgent();
-                OrderAgentButton orderAgentButton = new OrderAgentButton(
-                        startX + i * OrderAgentButton.getBoxLength(),
+                Coordinate coordinate =    new Coordinate(startX + i * OrderAgentButton.getBoxLength(),
                         startY + j * OrderAgentButton.getBoxLength());
+                OrderAgent orderAgent = new OrderAgent(this.mainController, coordinate);
+
+                OrderAgentButton orderAgentButton = new OrderAgentButton(
+                        coordinate.getX(), coordinate.getY());
                 orderAgentButton.setStatus(StatusEnum.IDLE);
                 orderAgentButton.addActionListener(new OrderAgentActionListener(orderAgentButton, orderAgent));
                 mainFrame.add(orderAgentButton);
-                this.mainController.registerAgent(agentName, orderAgent);
+                this.mainController.registerAgent(agentName, orderAgent, orderAgentButton);
                 count++;
             }
 

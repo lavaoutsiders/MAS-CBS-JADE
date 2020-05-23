@@ -4,7 +4,7 @@ import ui.GUI;
 
 public class Main {
     public static void main(String[] args) {
-        MainController mainController = new MainController();
+        MainControllerImpl mainController = new MainControllerImpl();
         GUI gui = new GUI(mainController);
     }
 }

@@ -18,6 +18,7 @@ public class SelectItemView {
         this.mainFrame.add(createButton(ItemsEnum.SASHIMI));
         this.mainFrame.add(createButton(ItemsEnum.SOUP));
         this.mainFrame.add(createButton(ItemsEnum.SUSHI_ROLL));
+        this.mainFrame.setTitle("Select an item to order");
         this.mainFrame.setLayout(new GridLayout(1,4));
         this.mainFrame.setSize(600, 200);
     }

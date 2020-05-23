@@ -1,9 +1,20 @@
 package ui.elements;
 
+import models.TaskEnum;
 import ui.StatusEnum;
 
-public interface AgentButton {
+import javax.swing.*;
 
-    void setStatus(StatusEnum status);
+public abstract class AgentButton extends JButton implements IAgentButton {
 
-}
+    private TaskEnum currentStatus;
+
+    public TaskEnum getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.setText(status.getValue());
+        this.setBackground(status.getColor());
+    }
+} 

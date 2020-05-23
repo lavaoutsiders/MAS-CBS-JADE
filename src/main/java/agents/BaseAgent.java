@@ -1,24 +1,41 @@
 package agents;
 
 import jade.core.Agent;
-import jade.core.Service;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.domain.FIPANames;
-import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import main.MainController;
+import main.MainControllerImpl;
+import models.Coordinate;
 import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 public abstract class BaseAgent extends Agent {
+
+    private final MainController mainController;
+
     private final Set<TaskEnum> supportedTasks;
-    public BaseAgent(@NotNull Set<TaskEnum> supportedTasks) {
-        this.supportedTasks = supportedTasks;
+
+    private Coordinate coordinate;
+
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
+
+    public void setCoordinate(@NotNull Coordinate coordinate) {
+        this.coordinate = coordinate;
+    }
+
+    public BaseAgent(@NotNull MainController mainController, @NotNull Set<TaskEnum> supportedTasks, @NotNull Coordinate coordinate) {
+        this.supportedTasks = supportedTasks;
+        this.mainController = mainController;
+        this.coordinate = coordinate;
+    }
+
 
     @Override
     protected void setup() {
@@ -57,4 +74,7 @@ public abstract class BaseAgent extends Agent {
 
     }
 
+    public MainController getMainController() {
+        return mainController;
+    }
 }
