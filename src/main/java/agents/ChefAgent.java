@@ -50,6 +50,7 @@ class ChefAgentInitiatorBehaviour extends ContractNetInitiator {
 class ChefAgentResponderBehaviour extends ContractNetResponder {
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
+        System.out.println("Received cfp for order with content " + cfp.getContent());
         ACLMessage reply = cfp.createReply();
 
         boolean shouldPropose = false;
@@ -61,6 +62,7 @@ class ChefAgentResponderBehaviour extends ContractNetResponder {
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         ACLMessage reply = cfp.createReply();
+
         //TODO
         return reply;
     }
@@ -88,9 +90,8 @@ class ChefAgentResponderBehaviour extends ContractNetResponder {
 public class ChefAgent extends BaseAgent implements IChefAgent {
 
     public ChefAgent() {
-        super(Sets.newHashSet(TaskEnum.KNEED_RICE, TaskEnum.CUT_FISH));
+        super(Sets.newHashSet(TaskEnum.START_ORDER, TaskEnum.KNEED_RICE, TaskEnum.CUT_FISH));
         this.addBehaviour(new ChefAgentResponderBehaviour(this, getContractNetTemplate()));
-//        this.addBehaviour(new ChefAgentInitiatorBehaviour(this, ));
     }
 
     @Override

@@ -1,18 +1,21 @@
 package agents;
 
 import com.google.common.collect.Sets;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
+import models.ItemsEnum;
 import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
+import utils.DFUtils;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 class OrderAgentInitiatorBehaviour extends ContractNetInitiator {
 
@@ -53,8 +56,16 @@ public class OrderAgent extends BaseAgent implements IOrderAgent {
         super(Sets.newHashSet(TaskEnum.RECEIVE_ORDER));
     }
 
-    public void sendNewOrder() {
+    public void submitNewOrder(ItemsEnum itemsEnum) {
+        ACLMessage message = new ACLMessage(ACLMessage.CFP);
+        message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+        message.setReplyByDate(getReplyDeadline());
+        message.setContent(itemsEnum.toString());
 
-        System.out.println("Order agent submitted a new order");
+        Objects.requireNonNull(
+                DFUtils.searchDF(TaskEnum.START_ORDER.toString(), OrderAgent.this))
+                .forEach(message::addReceiver);
+        send(message);
+        System.out.println("Order agent submitted a new order with item " + itemsEnum.toString());
     }
 }

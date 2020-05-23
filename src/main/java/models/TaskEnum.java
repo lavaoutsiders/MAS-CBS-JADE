@@ -9,7 +9,8 @@ public enum  TaskEnum {
     KNEED_RICE(5),
     MAKE_SUSHI(8),
     WASH_DISH(15),
-    RECEIVE_ORDER(5);
+    RECEIVE_ORDER(5),
+    START_ORDER(1);
     private final int duration;
 
     TaskEnum(int seconds) {
@@ -23,6 +24,7 @@ public enum  TaskEnum {
     public ServiceDescription toServiceDescription() {
         ServiceDescription serviceDescription = new ServiceDescription();
         serviceDescription.setType(this.toString());
+        serviceDescription.setName(this.toString());
         return serviceDescription;
     }
 }

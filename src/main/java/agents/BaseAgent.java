@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public abstract class BaseAgent extends Agent {
-    private Set<TaskEnum> supportedTasks;
+    private final Set<TaskEnum> supportedTasks;
     public BaseAgent(@NotNull Set<TaskEnum> supportedTasks) {
         this.supportedTasks = supportedTasks;
     }

@@ -4,9 +4,12 @@ import agents.ChefAgent;
 import agents.KitchenHelperAgent;
 import agents.OrderAgent;
 import jade.core.Agent;
+import main.MainController;
+import models.ItemsEnum;
 import org.jetbrains.annotations.NotNull;
 import ui.elements.KitchenAgentButton;
 import ui.elements.OrderAgentButton;
+import ui.views.SelectItemView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,22 +19,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class OrderAgentActionListener implements ActionListener {
-    public OrderAgentActionListener(OrderAgentButton orderAgentButton, OrderAgent orderAgent){
-        this.orderAgent = orderAgent;
-        this.orderAgentButton = orderAgentButton;
-    }
-    private OrderAgentButton orderAgentButton;
-    private OrderAgent orderAgent;
-    public void actionPerformed(ActionEvent e) {
-        orderAgentButton.setStatus(StatusEnum.WORKING);
-        orderAgent.sendNewOrder();
-    }
-};
+;
 
 public class GUI {
 
-    public static void main(String[] args) {
+    private JFrame mainFrame;
+    private MainController mainController;
+
+    public GUI(@NotNull MainController mainController) {
+        this.mainController = mainController;
         JFrame mainFrame = new JFrame("Conveyor belt sushi multi-agent simulation");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -42,11 +38,9 @@ public class GUI {
         addOrderAgents(mainFrame, 100, 100);
         Map<KitchenAgentButton, Agent> agentButtonChefAgentMap = addKitchenAgents(mainFrame, 180, 180);
         mainFrame.setVisible(true);
-
-
     }
 
-    private static Map<KitchenAgentButton, Agent> addKitchenAgents(@NotNull JFrame mainFrame, int startX, int startY) {
+    private Map<KitchenAgentButton, Agent> addKitchenAgents(@NotNull JFrame mainFrame, int startX, int startY) {
         int totalRows = 3;
         int totalColumns = 4;
         Set<Integer> helperRobotColumn = new HashSet<Integer>();
@@ -71,9 +65,11 @@ public class GUI {
                     count = chefCount;
                     chefCount++;
                 }
+                String agentName = prefix + count;
+                this.mainController.registerAgent(agentName, agent);
                 KitchenAgentButton kitchenAgentButton = new KitchenAgentButton(
                         startX + i * KitchenAgentButton.getBoxWidth() * 2 ,
-                        startY + j * KitchenAgentButton.getBoxHeight() * 2, prefix + count
+                        startY + j * KitchenAgentButton.getBoxHeight() * 2, agentName
                 );
                 kitchenAgentButton.setStatus(StatusEnum.IDLE);
                 mainFrame.add(kitchenAgentButton);
@@ -83,24 +79,29 @@ public class GUI {
         return result;
     }
 
-    private static void addOrderAgents(@NotNull JFrame mainFrame, int startX, int startY){
+    private void addOrderAgents(@NotNull JFrame mainFrame, int startX, int startY){
         int totalRows = (mainFrame.getHeight() - 150) / (OrderAgentButton.getBoxLength() + 20 );
         int totalColumns = (mainFrame.getWidth() - 150) / (OrderAgentButton.getBoxLength() + 20);
+        int count = 0;
         for (int i = 0; i <= totalColumns; i++) {
             for (int j = 0; j <= totalRows; j++) {
                 if ( !(i == 0 || i == totalColumns) && !(j == 0 || j == totalRows)) {
                     continue;
                 }
+                String agentName = "OrderAgent " + count;
                 OrderAgent orderAgent = new OrderAgent();
                 OrderAgentButton orderAgentButton = new OrderAgentButton(
                         startX + i * OrderAgentButton.getBoxLength(),
                         startY + j * OrderAgentButton.getBoxLength());
                 orderAgentButton.setStatus(StatusEnum.IDLE);
                 orderAgentButton.addActionListener(new OrderAgentActionListener(orderAgentButton, orderAgent));
-                mainFrame.add(orderAgentButton) ;
+                mainFrame.add(orderAgentButton);
+                this.mainController.registerAgent(agentName, orderAgent);
+                count++;
             }
 
         }
     }
+
 
 }
