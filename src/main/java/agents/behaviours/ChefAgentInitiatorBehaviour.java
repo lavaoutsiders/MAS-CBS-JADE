@@ -6,7 +6,7 @@ import jade.proto.ContractNetInitiator;
 
 import java.util.Vector;
 
-class ChefAgentInitiatorBehaviour extends ContractNetInitiator {
+class ChefAgentInitiatorBehaviour extends ContractNetInitiatorBehaviour {
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
         System.out.println("PROPOSE TASKHELP - Agent " + propose.getSender().getName()
@@ -25,11 +25,6 @@ class ChefAgentInitiatorBehaviour extends ContractNetInitiator {
         super.handleInform(inform);
     }
 
-    @Override
-    protected void handleAllResponses(Vector responses, Vector acceptances) {
-        System.out.println("Handling all responses");
-        super.handleAllResponses(responses, acceptances);
-    }
 
     @Override
     protected void handleAllResultNotifications(Vector resultNotifications) {

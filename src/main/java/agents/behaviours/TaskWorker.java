@@ -92,7 +92,7 @@ public class TaskWorker {
         sequentialBehaviour.addSubBehaviour(new WakerBehaviour(this.chefAgent, timeout ) {
             @Override
             protected void onWake() {
-                System.out.println("Finished task");
+                System.out.println("Finished task"); // TODO
             }
         });
 

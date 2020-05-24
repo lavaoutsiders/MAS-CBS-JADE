@@ -1,5 +1,6 @@
 package agents;
 
+import agents.behaviours.ContractNetInitiatorBehaviour;
 import com.google.common.collect.Sets;
 import jade.core.Agent;
 import jade.domain.FIPANames;
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-class OrderAgentInitiatorBehaviour extends ContractNetInitiator {
+class OrderAgentInitiatorBehaviour extends ContractNetInitiatorBehaviour {
 
     public OrderAgentInitiatorBehaviour(Agent a, ACLMessage cfp) {
         super(a, cfp);
@@ -43,31 +44,7 @@ class OrderAgentInitiatorBehaviour extends ContractNetInitiator {
         System.out.println("INFORM - Agent " + inform.getSender().getName() + " successfully performed the task");
     }
 
-    @Override
-    protected void handleAllResponses(Vector responses, Vector acceptances) {
 
-        Spliterator<ACLMessage> iterator = responses.spliterator();
-        Optional<ACLMessage> bestOffer = StreamSupport.stream(iterator, false)
-                .filter(msg-> msg.getPerformative() == ACLMessage.PROPOSE)
-                .min((msg1, msg2) -> (int) (Double.parseDouble(msg1.getContent()) - Double.parseDouble(msg2.getContent())));
-        if (! bestOffer.isPresent()) {
-            System.out.println("!!! No agent is able to handle the order.");
-            // TODO: add to queue
-            return;
-        }
-        ACLMessage bestReply = bestOffer.get().createReply();
-        bestReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-        acceptances.add(bestReply);
-        iterator = responses.spliterator();
-        iterator.forEachRemaining(aclMessage -> {
-            if (aclMessage != bestOffer.get()) {
-                ACLMessage reply = aclMessage.createReply();
-                reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
-                acceptances.add(reply);
-            }
-        });
-
-    }
 }
 
 public class OrderAgent extends BaseAgent implements IOrderAgent {

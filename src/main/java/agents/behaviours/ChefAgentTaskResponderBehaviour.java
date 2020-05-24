@@ -6,8 +6,11 @@ import exceptions.TaskNotDecomposableException;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
+import javafx.concurrent.Task;
 import main.MainController;
 import models.Description;
+import models.OrderDescription;
 import models.TaskDescription;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +22,7 @@ public class ChefAgentTaskResponderBehaviour extends ChefAgentResponderBehaviour
 
     @Override
     public boolean shouldAcceptProposal() {
-        return false;
+        return true; // TODO
     }
 
     public double calculateCost(Description taskDescription) {
@@ -29,17 +32,18 @@ public class ChefAgentTaskResponderBehaviour extends ChefAgentResponderBehaviour
         try {
             return ((ChefAgent) this.getAgent()).getCoordinate()
                     .euclideanDistance(taskDescription.getCoordinate())
-                    + ((ChefAgent) this.getAgent()).calculateSubTaskCost(((TaskDescription) taskDescription).getTask()); // TODO
+                    + ((ChefAgent) this.getAgent())
+                    .calculateSubTaskCost(((TaskDescription) taskDescription).getTask()); // TODO
         } catch (TaskNotDecomposableException e) {
             e.printStackTrace();
         }
         return Double.POSITIVE_INFINITY;
     }
 
-    @Override
-    protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-        return super.handleAcceptProposal(cfp, propose, accept);
-    }
+
+
+
+
 
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
@@ -48,6 +52,11 @@ public class ChefAgentTaskResponderBehaviour extends ChefAgentResponderBehaviour
 
     @Override
     public void resumeWork(ACLMessage cfp) {
+
+    }
+
+    @Override
+    protected void handleWork(ACLMessage accept, Description description) {
 
     }
 

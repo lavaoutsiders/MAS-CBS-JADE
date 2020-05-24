@@ -4,6 +4,7 @@ import agents.behaviours.ChefAgentOrderResponderBehaviour;
 import agents.behaviours.ChefAgentTaskResponderBehaviour;
 import com.google.common.collect.Sets;
 import exceptions.TaskNotDecomposableException;
+import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import main.MainController;
 import models.*;
@@ -16,14 +17,15 @@ public class ChefAgent extends BaseAgent implements IChefAgent {
         super(mainController,Sets.newHashSet(TaskEnum.START_ORDER, TaskEnum.KNEED_RICE, TaskEnum.CUT_FISH,
                 TaskEnum.MAKE_SUSHI, TaskEnum.PLATING, TaskEnum.WARM_SOUP),
                 coordinate);
-
+        //new MessageContentMatcher(OrderDescription.class).getMessageTemplate()
         MessageTemplate orderAgentMessage = MessageTemplate.and(getContractNetTemplate(),
-                new MessageContentMatcher(OrderDescription.class).getMessageTemplate());
+                new MessageTemplate((MessageTemplate.MatchExpression) aclMessage -> aclMessage.getSender().getName().contains("Order")));
 
         this.addBehaviour(new ChefAgentOrderResponderBehaviour(this, orderAgentMessage, mainController));
 
+        //new MessageContentMatcher(TaskDescription.class).getMessageTemplate()
         MessageTemplate taskMessageTemplate = MessageTemplate.and(getContractNetTemplate(),
-                new MessageContentMatcher(TaskDescription.class).getMessageTemplate());
+                new MessageTemplate((MessageTemplate.MatchExpression) aclMessage -> aclMessage.getSender().getName().contains("Chef")));
         this.addBehaviour(new ChefAgentTaskResponderBehaviour(this, taskMessageTemplate, this.getMainController()));
         this.agentSupply = new AgentSupply();
     }
@@ -54,11 +56,11 @@ public class ChefAgent extends BaseAgent implements IChefAgent {
     public double calculateSubTaskCost(TaskEnum task) throws TaskNotDecomposableException {
         switch (task) {
             case CUT_FISH:
-                return this.getAgentSupply().hasSlicedFish() ? task.getDuration() : 0 ;
+                return this.getAgentSupply().hasSlicedFish() ? 0 : task.getDuration() ;
             case KNEED_RICE:
-                return this.getAgentSupply().hasRiceRoll() ? task.getDuration() : 0;
+                return this.getAgentSupply().hasRiceRoll() ? 0 : task.getDuration() ;
             case WARM_SOUP:
-                return this.getAgentSupply().hasSoup() ? task.getDuration() : 0;
+                return this.getAgentSupply().hasSoup() ? 0 : task.getDuration() ;
             default:
                 throw new TaskNotDecomposableException();
         }

@@ -26,22 +26,12 @@ public class ChefAgentOrderResponderBehaviour extends ChefAgentResponderBehaviou
 
     }
 
-    private void handleWork(@NotNull ACLMessage accept, @NotNull ItemsEnum item) {
-        long waitDuration;
-        ChefAgent chefAgent = (ChefAgent) this.getAgent();
-        TaskWorker taskWorker = new TaskWorker(new OrderDescription(item, ((ChefAgent) this.getAgent()).getCoordinate()),
-                this);
-
-        taskWorker.executeTask();
-
-    }
-
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         ACLMessage reply = super.handleAcceptProposal(cfp, propose, accept);
         try {
-            if (cfp.getContentObject() instanceof OrderDescription) {
-                this.handleWork(accept, ((OrderDescription) cfp.getContentObject()).getItem());
+            if (cfp.getContentObject() instanceof Description) {
+                this.handleWork(accept, (Description) cfp.getContentObject());
             }
         } catch (UnreadableException e) {
             e.printStackTrace();
@@ -49,6 +39,17 @@ public class ChefAgentOrderResponderBehaviour extends ChefAgentResponderBehaviou
 
 
         return reply;
+    }
+
+    @Override
+    protected void handleWork(ACLMessage accept, Description description) {
+        if (!(description instanceof OrderDescription)) return;
+        long waitDuration;
+        ChefAgent chefAgent = (ChefAgent) this.getAgent();
+        TaskWorker taskWorker = new TaskWorker(new OrderDescription(((OrderDescription) description).getItem(), ((ChefAgent) this.getAgent()).getCoordinate()),
+                this);
+
+        taskWorker.executeTask();
     }
 
     @Override

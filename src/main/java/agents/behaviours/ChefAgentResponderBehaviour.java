@@ -12,10 +12,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetResponder;
 import main.MainController;
-import models.Coordinate;
-import models.Description;
-import models.OrderDescription;
-import models.TaskEnum;
+import models.*;
 import org.jetbrains.annotations.NotNull;
 import ui.StatusEnum;
 
@@ -46,9 +43,21 @@ public abstract class ChefAgentResponderBehaviour extends ContractNetResponder {
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
         System.out.println("Offer accepted for " + this.getAgent().getName());
-        this.mainController.setUIComponentState(this.getAgent(), StatusEnum.WORKING);
-        return cfp.createReply();
+        ACLMessage reply = accept.createReply();
+        try {
+            if (cfp.getContentObject() instanceof Description) {
+                this.handleWork(accept, ((Description) cfp.getContentObject()));
+                reply.setPerformative(ACLMessage.INFORM);
+            }
+        } catch (UnreadableException e) {
+            e.printStackTrace();
+        }
+
+
+        return reply;
     }
+
+    protected abstract void handleWork(ACLMessage accept, Description description);
 
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
@@ -79,7 +88,9 @@ public abstract class ChefAgentResponderBehaviour extends ContractNetResponder {
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
         try {
-            System.out.println("Chef agent " + this.getAgent().getName() + " received cfp for order with content " + cfp.getContentObject().toString());
+            Serializable result = cfp.getContentObject();
+            System.out.println("Chef agent " + this.getAgent().getName() + " received cfp for order with content " +
+                    (result == null ? cfp.getContent() : result.toString()) );
         } catch (UnreadableException e) {
             e.printStackTrace();
         }
