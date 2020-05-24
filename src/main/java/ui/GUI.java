@@ -93,7 +93,7 @@ public class GUI {
                 OrderAgent orderAgent = new OrderAgent(this.mainController, coordinate);
 
                 OrderAgentButton orderAgentButton = new OrderAgentButton(
-                        coordinate.getX(), coordinate.getY());
+                        coordinate.getX(), coordinate.getY(), "OA " + count);
                 orderAgentButton.setStatus(StatusEnum.IDLE);
                 orderAgentButton.addActionListener(new OrderAgentActionListener(orderAgentButton, orderAgent));
                 mainFrame.add(orderAgentButton);

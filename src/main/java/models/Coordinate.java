@@ -25,4 +25,9 @@ public class Coordinate implements Serializable {
     public double euclideanDistance(Coordinate coordinate){
         return Math.sqrt(Math.pow(this.x - coordinate.getX(), 2) + Math.pow(this.y - coordinate.getY(),2));
     }
+
+    @Override
+    public String toString() {
+        return "x: " + this.getX() + ", y: " + this.getY();
+    }
 }

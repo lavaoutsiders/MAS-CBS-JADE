@@ -1,6 +1,7 @@
 package agents;
 
 import com.google.common.collect.Sets;
+import jade.lang.acl.ACLMessage;
 import main.MainController;
 import main.MainControllerImpl;
 import models.Coordinate;
@@ -12,4 +13,6 @@ public class KitchenHelperAgent extends BaseAgent {
         super(mainController, Sets.newHashSet(TaskEnum.WASH_DISH),
                 coordinate);
     }
+
+
 }

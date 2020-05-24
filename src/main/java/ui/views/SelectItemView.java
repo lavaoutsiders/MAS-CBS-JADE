@@ -14,7 +14,6 @@ public class SelectItemView {
     public SelectItemView(@NotNull OrderAgent orderAgent) {
         this.mainFrame = new JFrame();
         this.orderAgent = orderAgent;
-        this.mainFrame.add(createButton(ItemsEnum.BEVERAGE));
         this.mainFrame.add(createButton(ItemsEnum.SASHIMI));
         this.mainFrame.add(createButton(ItemsEnum.SOUP));
         this.mainFrame.add(createButton(ItemsEnum.SUSHI_ROLL));

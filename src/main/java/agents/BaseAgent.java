@@ -5,6 +5,7 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAException;
 import jade.domain.FIPANames;
+import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import main.MainController;
 import main.MainControllerImpl;
@@ -25,6 +26,17 @@ public abstract class BaseAgent extends Agent {
     public Coordinate getCoordinate() {
         return coordinate;
     }
+
+    private boolean isWorking;
+
+    public boolean getWorkingStatus() {
+        return isWorking;
+    }
+
+    public void setWorkingStatus(boolean isWorking) {
+        this.isWorking = isWorking;
+    }
+
 
     public void setCoordinate(@NotNull Coordinate coordinate) {
         this.coordinate = coordinate;

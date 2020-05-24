@@ -3,8 +3,6 @@ package models;
 import exceptions.InSufficientSupplyException;
 import exceptions.OversupplyException;
 
-import javax.naming.InsufficientResourcesException;
-
 public class AgentSupply {
     private int cleanDishes;
     private int maxCleanDishes = 100;
@@ -12,14 +10,14 @@ public class AgentSupply {
     private int nbSlicedFish;
     private int maxSlicedFish = 200;
 
-    private int beverages;
-    private int maxBeverages = 100;
+    private int riceRolls;
+    private int maxRiceRolls = 100;
 
     private int soups;
     private int maxSoups = 10;
 
-    public int getBeverages() {
-        return beverages;
+    public int getRiceRolls() {
+        return riceRolls;
     }
 
     public int getCleanDishes() {
@@ -34,8 +32,8 @@ public class AgentSupply {
         return soups;
     }
 
-    public boolean hasBeverage() {
-        return this.beverages > 0;
+    public boolean hasRiceRoll() {
+        return this.riceRolls > 0;
     }
 
     public boolean hasCleanDish() {
@@ -51,10 +49,10 @@ public class AgentSupply {
     }
 
     public void incrementBeverage() throws OversupplyException {
-        if (this.beverages + 1 > this.maxBeverages) {
+        if (this.riceRolls + 1 > this.maxRiceRolls) {
             throw new OversupplyException();
         }
-        this.beverages++;
+        this.riceRolls++;
     }
 
     public void incrementCleanDishes() throws OversupplyException {
@@ -79,10 +77,10 @@ public class AgentSupply {
     }
 
     public void decrementBeverage() throws InSufficientSupplyException {
-        if (this.beverages - 1 < 0 ) {
+        if (this.riceRolls - 1 < 0 ) {
             throw new InSufficientSupplyException();
         }
-        this.beverages--;
+        this.riceRolls--;
     }
 
     public void decrementSoup() throws InSufficientSupplyException {

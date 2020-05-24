@@ -25,6 +25,7 @@ public class MainControllerImpl implements MainController {
         profile.setParameter(Profile.CONTAINER_NAME, "SushiAgentContainer");
         profile.setParameter(Profile.MAIN_HOST, "localhost");
         profile.setParameter(Profile.LOCAL_HOST, "127.0.0.1");
+        profile.setParameter(Profile.GUI, "true");
 
         containerController = runtime.createMainContainer(profile);
 

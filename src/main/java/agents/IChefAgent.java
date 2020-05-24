@@ -1,6 +1,12 @@
 package agents;
 
+import exceptions.TaskNotDecomposableException;
+import models.ItemsEnum;
+import models.TaskEnum;
+
 public interface IChefAgent {
 
-    int calculateAgentScore(int x, int y);
+    double calculateMainTaskCost(ItemsEnum item);
+
+    double calculateSubTaskCost(TaskEnum task) throws TaskNotDecomposableException;
 }

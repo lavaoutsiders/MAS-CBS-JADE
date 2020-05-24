@@ -6,7 +6,8 @@ import ui.StatusEnum;
 import javax.swing.*;
 
 public class OrderAgentButton extends AgentButton {
-    public OrderAgentButton(int x, int y) {
+    public OrderAgentButton(int x, int y, String title) {
+        this.setBorder(BorderFactory.createTitledBorder(title));
         this.setLocation(x,y);
         this.setSize(getBoxLength(), getBoxLength());
     }

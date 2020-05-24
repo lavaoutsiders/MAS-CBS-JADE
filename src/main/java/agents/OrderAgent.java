@@ -1,15 +1,14 @@
 package agents;
 
 import com.google.common.collect.Sets;
-import com.google.common.collect.Streams;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
 import main.MainController;
-import main.MainControllerImpl;
 import models.Coordinate;
 import models.ItemsEnum;
+import models.OrderDescription;
 import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 import utils.DFUtils;
@@ -52,7 +51,8 @@ class OrderAgentInitiatorBehaviour extends ContractNetInitiator {
                 .filter(msg-> msg.getPerformative() == ACLMessage.PROPOSE)
                 .min((msg1, msg2) -> (int) (Double.parseDouble(msg1.getContent()) - Double.parseDouble(msg2.getContent())));
         if (! bestOffer.isPresent()) {
-            System.out.println("! No agent is able to handle the order.");
+            System.out.println("!!! No agent is able to handle the order.");
+            // TODO: add to queue
             return;
         }
         ACLMessage bestReply = bestOffer.get().createReply();
@@ -84,9 +84,8 @@ public class OrderAgent extends BaseAgent implements IOrderAgent {
         ACLMessage message = new ACLMessage(ACLMessage.CFP);
         message.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
         message.setReplyByDate(getReplyDeadline());
-        message.setContent(itemsEnum.toString());
         try {
-            message.setContentObject(OrderAgent.this.getCoordinate());
+            message.setContentObject(new OrderDescription(itemsEnum, OrderAgent.this.getCoordinate()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,4 +96,5 @@ public class OrderAgent extends BaseAgent implements IOrderAgent {
         System.out.println("Order agent submitted a new order with item " + itemsEnum.toString());
 
     }
+
 }

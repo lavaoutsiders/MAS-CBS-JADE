@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 public enum  TaskEnum {
 
+    WARM_SOUP(15),
+    PLATING(1),
     CUT_FISH(10),
     KNEED_RICE(5),
     MAKE_SUSHI(8),
