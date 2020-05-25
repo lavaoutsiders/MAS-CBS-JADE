@@ -2,6 +2,7 @@ package agents.behaviours;
 
 import agents.BaseAgent;
 import agents.ChefAgent;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ResultTreeType;
 import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.FailureException;
@@ -18,7 +19,7 @@ import ui.StatusEnum;
 
 import java.io.Serializable;
 
-public abstract class ChefAgentResponderBehaviour extends ContractNetResponder {
+public abstract class   ChefAgentResponderBehaviour extends ContractNetResponder {
 
 
 
@@ -26,16 +27,7 @@ public abstract class ChefAgentResponderBehaviour extends ContractNetResponder {
 
 
 
-    public void startWork(TaskEnum task, ACLMessage cfp){
-        this.getAgent().addBehaviour(new WakerBehaviour(this.getAgent(), task.getDuration()) {
-            @Override
-            protected void onWake() {
-                if (this.getAgent() instanceof BaseAgent) {
-                    ChefAgentResponderBehaviour.this.resumeWork(cfp);
-                }
-            }
-        });
-    }
+
 
     public abstract void resumeWork(ACLMessage cfp);
 
@@ -87,8 +79,9 @@ public abstract class ChefAgentResponderBehaviour extends ContractNetResponder {
 
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
+        Serializable result = null;
         try {
-            Serializable result = cfp.getContentObject();
+            result = cfp.getContentObject();
             System.out.println("Chef agent " + this.getAgent().getName() + " received cfp for order with content " +
                     (result == null ? cfp.getContent() : result.toString()) );
         } catch (UnreadableException e) {
@@ -96,27 +89,16 @@ public abstract class ChefAgentResponderBehaviour extends ContractNetResponder {
         }
         ACLMessage reply = cfp.createReply();
         Description description;
-        try {
-            Serializable object = cfp.getContentObject();
 
-            if (! ( object instanceof Description)) {
-                reply.setPerformative(ACLMessage.REFUSE);
-                return reply;
-            }
-            description = ((Description) object);
-        } catch (UnreadableException e) {
+        if (! ( result instanceof Description) || !shouldAcceptProposal()) {
             reply.setPerformative(ACLMessage.REFUSE);
             return reply;
         }
+        description = ((Description) result);
         double cost = calculateCost(description);
-
-        // TODO !!! Check when to refuse
-        if (!shouldAcceptProposal()) {
-            reply.setPerformative(ACLMessage.REFUSE);
-            return reply;
-        }
-
+        System.out.println("PROPOSE AGENT - Agent" + this.getAgent().getName() + " proposed with value " + cost);
         reply.setPerformative(ACLMessage.PROPOSE);
+
         reply.setContent(String.valueOf(cost));
         this.getMainController().setUIComponentState(myAgent, StatusEnum.RECEIVED_NEW_MESSAGE);
         return reply;

@@ -3,6 +3,7 @@ package agents.behaviours;
 import agents.BaseAgent;
 import agents.ChefAgent;
 import exceptions.TaskNotDecomposableException;
+import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -12,12 +13,24 @@ import main.MainController;
 import models.Description;
 import models.OrderDescription;
 import models.TaskDescription;
+import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 
 public class ChefAgentTaskResponderBehaviour extends ChefAgentResponderBehaviour {
 
     public ChefAgentTaskResponderBehaviour(BaseAgent a, MessageTemplate mt, @NotNull MainController mainController) {
         super(a, mt, mainController);
+    }
+
+    public void startWork(TaskEnum task, ACLMessage cfp){
+        this.getAgent().addBehaviour(new WakerBehaviour(this.getAgent(), task.getDuration()) {
+            @Override
+            protected void onWake() {
+                if (this.getAgent() instanceof BaseAgent) {
+                    ChefAgentTaskResponderBehaviour.this.resumeWork(cfp);
+                }
+            }
+        });
     }
 
     @Override
@@ -39,10 +52,6 @@ public class ChefAgentTaskResponderBehaviour extends ChefAgentResponderBehaviour
         }
         return Double.POSITIVE_INFINITY;
     }
-
-
-
-
 
 
     @Override

@@ -17,7 +17,8 @@ class ChefAgentInitiatorBehaviour extends ContractNetInitiatorBehaviour {
 
     @Override
     protected void handleRefuse(ACLMessage refuse) {
-        super.handleRefuse(refuse);
+
+        System.out.println("REFUSE TASKHELP - " + refuse.getSender().getName() + " refused to help the task");
     }
 
     @Override

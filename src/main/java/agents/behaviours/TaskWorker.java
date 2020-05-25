@@ -2,6 +2,7 @@ package agents.behaviours;
 
 import agents.ChefAgent;
 import agents.OrderAgent;
+import jade.core.AID;
 import jade.core.behaviours.*;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -121,6 +122,8 @@ public class TaskWorker {
 
         Objects.requireNonNull(
                 DFUtils.searchDF(task.toString(), this.chefAgent))
+                .stream()
+                .filter(aid -> ! aid.equals(this.chefAgent.getAID()))
                 .forEach(message::addReceiver);
 
         return message;

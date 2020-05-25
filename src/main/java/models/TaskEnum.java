@@ -3,7 +3,9 @@ package models;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import org.jetbrains.annotations.NotNull;
 
-public enum  TaskEnum {
+import java.io.Serializable;
+
+public enum  TaskEnum implements Serializable {
 
     WARM_SOUP(15),
     PLATING(1),

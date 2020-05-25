@@ -18,13 +18,13 @@ public class ChefAgent extends BaseAgent implements IChefAgent {
                 TaskEnum.MAKE_SUSHI, TaskEnum.PLATING, TaskEnum.WARM_SOUP),
                 coordinate);
         //new MessageContentMatcher(OrderDescription.class).getMessageTemplate()
-        MessageTemplate orderAgentMessage = MessageTemplate.and(getContractNetTemplate(),
+        MessageTemplate orderAgentMessage = MessageTemplate.and(getContractNetTemplate(ACLMessage.CFP),
                 new MessageTemplate((MessageTemplate.MatchExpression) aclMessage -> aclMessage.getSender().getName().contains("Order")));
 
         this.addBehaviour(new ChefAgentOrderResponderBehaviour(this, orderAgentMessage, mainController));
 
         //new MessageContentMatcher(TaskDescription.class).getMessageTemplate()
-        MessageTemplate taskMessageTemplate = MessageTemplate.and(getContractNetTemplate(),
+        MessageTemplate taskMessageTemplate = MessageTemplate.and(getContractNetTemplate(ACLMessage.CFP),
                 new MessageTemplate((MessageTemplate.MatchExpression) aclMessage -> aclMessage.getSender().getName().contains("Chef")));
         this.addBehaviour(new ChefAgentTaskResponderBehaviour(this, taskMessageTemplate, this.getMainController()));
         this.agentSupply = new AgentSupply();
