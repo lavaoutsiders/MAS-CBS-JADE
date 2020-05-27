@@ -9,8 +9,8 @@ import java.util.Vector;
 class ChefAgentInitiatorBehaviour extends ContractNetInitiatorBehaviour {
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
-        System.out.println("PROPOSE TASKHELP - Agent " + propose.getSender().getName()
-                + " proposed with value " + propose.getContent());
+//        System.out.println("PROPOSE TASKHELP - Agent " + propose.getSender().getName()
+//                + " proposed with value " + propose.getContent());
     }
 
 
@@ -18,7 +18,7 @@ class ChefAgentInitiatorBehaviour extends ContractNetInitiatorBehaviour {
     @Override
     protected void handleRefuse(ACLMessage refuse) {
 
-        System.out.println("REFUSE TASKHELP - " + refuse.getSender().getName() + " refused to help the task");
+//        System.out.println("REFUSE TASKHELP - " + refuse.getSender().getName() + " refused to help the task");
     }
 
     @Override
