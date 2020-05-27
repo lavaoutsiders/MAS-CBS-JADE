@@ -1,41 +1,73 @@
 package agents;
 
+import agents.behaviours.ContractNetResponderBehaviour;
 import com.google.common.collect.Sets;
 import jade.core.Agent;
+import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.FailureException;
-import jade.domain.FIPAAgentManagement.NotUnderstoodException;
-import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.proto.ContractNetResponder;
 import main.MainController;
-import main.MainControllerImpl;
-import models.Coordinate;
-import models.TaskEnum;
+import models.*;
 import org.jetbrains.annotations.NotNull;
 
-class KitchenHelperResponderBehaviour extends ContractNetResponder {
+class KitchenHelperResponderBehaviour extends ContractNetResponderBehaviour {
 
-    @Override
-    protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
-        return super.handleCfp(cfp);
+    public KitchenHelperResponderBehaviour(KitchenHelperAgent a, MessageTemplate mt, @NotNull MainController mainController) {
+        super(a, mt, mainController);
     }
 
     @Override
-    protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-        return super.handleAcceptProposal(cfp, propose, accept);
+    protected double calculateCost(Description description) {
+        if (!(description instanceof TaskDescription)) {
+            return Double.POSITIVE_INFINITY;
+        }
+        return description.getCoordinate().euclideanDistance(this.getAgent().getCoordinate())
+                + TaskEnum.WASH_DISH.getDuration();
     }
 
-    public KitchenHelperResponderBehaviour(Agent a, MessageTemplate mt) {
-        super(a, mt);
+    @Override
+    public boolean shouldAcceptProposal() {
+        return true;
     }
+
+    @Override
+    public KitchenHelperAgent getAgent() {
+        return (KitchenHelperAgent) this.myAgent;
+    }
+
+    @Override
+    public void resumeWork(ACLMessage cfp) {
+        ACLMessage reply = cfp.createReply();
+        reply.setPerformative(ACLMessage.INFORM);
+    }
+
+
+    @Override
+    protected void handleWork(ACLMessage accept, Description description) {
+        this.getAgent().addBehaviour(new WakerBehaviour( this.getAgent(), TaskEnum.WARM_SOUP.getDuration()) {
+            @Override
+            protected void onWake() {
+                resumeWork(accept);
+            }
+        });
+    }
+
 }
 
+
+
 public class KitchenHelperAgent extends BaseAgent {
+
+    private KitchenHelperSupply kitchenHelperSupply;
+
     public KitchenHelperAgent(@NotNull MainController mainController, @NotNull Coordinate coordinate) {
         super(mainController, Sets.newHashSet(TaskEnum.WASH_DISH),
                 coordinate);
-    }
+        this.addBehaviour(new KitchenHelperResponderBehaviour(this, getContractNetTemplate(ACLMessage.CFP)
+        , this.getMainController()));
 
+        this.kitchenHelperSupply = new KitchenHelperSupply();
+    }
 
 }

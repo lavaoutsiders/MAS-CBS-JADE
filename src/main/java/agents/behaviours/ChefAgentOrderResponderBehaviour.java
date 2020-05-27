@@ -10,7 +10,7 @@ import main.MainController;
 import models.*;
 import org.jetbrains.annotations.NotNull;
 
-public class ChefAgentOrderResponderBehaviour extends ChefAgentResponderBehaviour {
+public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehaviour {
 
     public ChefAgentOrderResponderBehaviour(BaseAgent a, MessageTemplate mt, @NotNull MainController mainController) {
         super(a, mt, mainController);

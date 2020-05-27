@@ -19,7 +19,7 @@ import ui.StatusEnum;
 
 import java.io.Serializable;
 
-public abstract class   ChefAgentResponderBehaviour extends ContractNetResponder {
+public abstract class ContractNetResponderBehaviour extends ContractNetResponder {
 
 
 
@@ -72,7 +72,7 @@ public abstract class   ChefAgentResponderBehaviour extends ContractNetResponder
         return mainController;
     }
 
-    public ChefAgentResponderBehaviour(BaseAgent a, MessageTemplate mt, @NotNull MainController mainController) {
+    public ContractNetResponderBehaviour(BaseAgent a, MessageTemplate mt, @NotNull MainController mainController) {
         super(a, mt);
         this.mainController = mainController;
     }
@@ -82,7 +82,7 @@ public abstract class   ChefAgentResponderBehaviour extends ContractNetResponder
         Serializable result = null;
         try {
             result = cfp.getContentObject();
-            System.out.println("Chef agent " + this.getAgent().getName() + " received cfp for order with content " +
+            System.out.println("Agent " + this.getAgent().getName() + " received cfp for order with content " +
                     (result == null ? cfp.getContent() : result.toString()) );
         } catch (UnreadableException e) {
             e.printStackTrace();

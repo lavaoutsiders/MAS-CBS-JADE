@@ -1,12 +1,9 @@
 package agents.behaviours;
 
 import agents.ChefAgent;
-import agents.OrderAgent;
-import jade.core.AID;
 import jade.core.behaviours.*;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
-import models.ItemsEnum;
 import models.OrderDescription;
 import models.TaskDescription;
 import models.TaskEnum;
@@ -20,11 +17,11 @@ import java.util.Objects;
 public class TaskWorker {
 
     private OrderDescription orderDescription;
-    private ChefAgentResponderBehaviour chefAgentResponderBehaviour;
+    private ContractNetResponderBehaviour chefAgentResponderBehaviour;
     private ChefAgent chefAgent;
     private long waitTime;
 
-    public TaskWorker(@NotNull OrderDescription orderDescription, @NotNull ChefAgentResponderBehaviour chefAgentResponderBehaviour){
+    public TaskWorker(@NotNull OrderDescription orderDescription, @NotNull ContractNetResponderBehaviour chefAgentResponderBehaviour){
         this.orderDescription = orderDescription;
         this.chefAgentResponderBehaviour = chefAgentResponderBehaviour;
         this.chefAgent = (ChefAgent) chefAgentResponderBehaviour.getAgent();

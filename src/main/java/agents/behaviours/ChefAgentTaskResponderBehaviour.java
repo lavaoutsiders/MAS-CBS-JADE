@@ -4,19 +4,15 @@ import agents.BaseAgent;
 import agents.ChefAgent;
 import exceptions.TaskNotDecomposableException;
 import jade.core.behaviours.WakerBehaviour;
-import jade.domain.FIPAAgentManagement.FailureException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
-import javafx.concurrent.Task;
 import main.MainController;
 import models.Description;
-import models.OrderDescription;
 import models.TaskDescription;
 import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 
-public class ChefAgentTaskResponderBehaviour extends ChefAgentResponderBehaviour {
+public class ChefAgentTaskResponderBehaviour extends ContractNetResponderBehaviour {
 
     public ChefAgentTaskResponderBehaviour(BaseAgent a, MessageTemplate mt, @NotNull MainController mainController) {
         super(a, mt, mainController);
