@@ -9,6 +9,7 @@ import jade.lang.acl.UnreadableException;
 import main.MainController;
 import models.*;
 import org.jetbrains.annotations.NotNull;
+import ui.StatusEnum;
 
 public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehaviour {
 
@@ -23,7 +24,7 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
 
     @Override
     public void resumeWork(ACLMessage cfp) {
-
+        this.workForDuration(cfp, TaskEnum.PLATING.getDuration());
     }
 
     @Override
@@ -43,13 +44,15 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
 
     @Override
     protected void handleWork(ACLMessage accept, Description description) {
+        this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.WORKING);
         if (!(description instanceof OrderDescription)) return;
         long waitDuration;
-        ChefAgent chefAgent = (ChefAgent) this.getAgent();
         TaskWorker taskWorker = new TaskWorker(new OrderDescription(((OrderDescription) description).getItem(), ((ChefAgent) this.getAgent()).getCoordinate()),
                 this);
-
         taskWorker.executeTask();
+
+        this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.IDLE);
+
     }
 
     @Override

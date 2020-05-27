@@ -1,5 +1,6 @@
 package main;
 
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import exceptions.NoAssociatedUIElementException;
 import jade.core.Agent;
 import jade.core.Profile;
@@ -49,6 +50,10 @@ public class MainControllerImpl implements MainController {
     @Override
     public void setUIComponentState(Agent agent, StatusEnum state) {
         AgentButton button = this.agentButtonMap.get(agent);
+        // Ignore message receive UI state override on the button
+        if (state == StatusEnum.RECEIVED_NEW_MESSAGE &&  button.getCurrentStatus() != StatusEnum.IDLE) {
+            return;
+        }
         if (button == null) {
 //            throw new NoAssociatedUIElementException();
             System.out.println("No associated UI Element found");

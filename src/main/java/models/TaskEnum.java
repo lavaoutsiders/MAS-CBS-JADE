@@ -22,7 +22,7 @@ public enum  TaskEnum implements Serializable {
     }
 
     public int getDuration() {
-        return duration;
+        return duration / 2;
     }
 
     public ServiceDescription toServiceDescription() {

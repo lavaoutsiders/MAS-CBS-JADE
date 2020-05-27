@@ -10,6 +10,7 @@ import jade.lang.acl.MessageTemplate;
 import main.MainController;
 import models.*;
 import org.jetbrains.annotations.NotNull;
+import ui.StatusEnum;
 
 class KitchenHelperResponderBehaviour extends ContractNetResponderBehaviour {
 
@@ -26,10 +27,6 @@ class KitchenHelperResponderBehaviour extends ContractNetResponderBehaviour {
                 + TaskEnum.WASH_DISH.getDuration();
     }
 
-    @Override
-    public boolean shouldAcceptProposal() {
-        return true;
-    }
 
     @Override
     public KitchenHelperAgent getAgent() {
@@ -38,13 +35,18 @@ class KitchenHelperResponderBehaviour extends ContractNetResponderBehaviour {
 
     @Override
     public void resumeWork(ACLMessage cfp) {
+        this.getAgent().setWorkingStatus(false);
         ACLMessage reply = cfp.createReply();
         reply.setPerformative(ACLMessage.INFORM);
+
+        this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.IDLE);
     }
 
 
     @Override
     protected void handleWork(ACLMessage accept, Description description) {
+        this.getAgent().setWorkingStatus(true);
+        this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.WORKING);
         this.getAgent().addBehaviour(new WakerBehaviour( this.getAgent(), TaskEnum.WARM_SOUP.getDuration()) {
             @Override
             protected void onWake() {

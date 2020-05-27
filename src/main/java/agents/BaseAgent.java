@@ -48,7 +48,6 @@ public abstract class BaseAgent extends Agent {
         this.coordinate = coordinate;
     }
 
-
     @Override
     protected void setup() {
         DFAgentDescription agentDescription = new DFAgentDescription();

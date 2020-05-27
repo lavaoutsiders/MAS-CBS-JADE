@@ -23,7 +23,9 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
 
 
 
-    public abstract boolean shouldAcceptProposal();
+    public boolean shouldAcceptProposal() {
+        return ! ((BaseAgent) this.getAgent()).getWorkingStatus();
+    }
 
 
 
@@ -47,6 +49,16 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
 
 
         return reply;
+    }
+
+    public void workForDuration(ACLMessage cfp, long duration) {
+        this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.WORKING);
+        this.getAgent().addBehaviour(new WakerBehaviour(this.getAgent(), duration) {
+            @Override
+            protected void onWake() {
+                resumeWork(cfp);
+            }
+        });
     }
 
     protected abstract void handleWork(ACLMessage accept, Description description);
