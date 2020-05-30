@@ -96,14 +96,6 @@ public class TaskWorker {
                 break;
         }
         timeout += TaskEnum.PLATING.getDuration();
-        // This step simulates the final preparation step
-        sequentialBehaviour.addSubBehaviour(new WakerBehaviour(this.chefAgent, timeout ) {
-            @Override
-            protected void onWake(){
-                chefAgentResponderBehaviour.resumeWork(getOriginCFP());
-            }
-
-        });
 
         this.chefAgent.addBehaviour(sequentialBehaviour);
 

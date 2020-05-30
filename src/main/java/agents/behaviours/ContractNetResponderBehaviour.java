@@ -39,7 +39,7 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
         ACLMessage reply = accept.createReply();
         try {
             if (cfp.getContentObject() instanceof Description) {
-                this.handleWork(accept, ((Description) cfp.getContentObject()));
+                this.handleWork(cfp, ((Description) cfp.getContentObject()));
                 reply.setPerformative(ACLMessage.INFORM);
             }
         } catch (UnreadableException e) {
@@ -60,7 +60,7 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
         });
     }
 
-    protected abstract void handleWork(ACLMessage accept, Description description);
+    protected abstract void handleWork(ACLMessage cfp, Description description);
 
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {

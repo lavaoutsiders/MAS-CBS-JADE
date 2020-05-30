@@ -2,16 +2,20 @@ package agents.behaviours;
 
 import agents.BaseAgent;
 import agents.ChefAgent;
+import com.sun.org.apache.regexp.internal.RE;
 import exceptions.TaskNotDecomposableException;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import main.MainController;
 import models.Description;
 import models.TaskDescription;
 import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 import ui.StatusEnum;
+
+import java.io.IOException;
 
 public class ChefAgentTaskResponderBehaviour extends ContractNetResponderBehaviour {
 
@@ -69,6 +73,11 @@ public class ChefAgentTaskResponderBehaviour extends ContractNetResponderBehavio
                 " for " + cfp.getSender().getName());
         ACLMessage reply = cfp.createReply();
         reply.setPerformative(ACLMessage.INFORM);
+        try {
+            reply.setContentObject(cfp.getContentObject());
+        } catch (IOException | UnreadableException e) {
+            e.printStackTrace();
+        }
         this.getAgent().send(reply);
     }
 

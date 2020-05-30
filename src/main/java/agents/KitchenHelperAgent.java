@@ -5,10 +5,13 @@ import com.google.common.collect.Sets;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import main.MainController;
 import models.*;
 import org.jetbrains.annotations.NotNull;
 import ui.StatusEnum;
+
+import java.io.IOException;
 
 class KitchenHelperResponderBehaviour extends ContractNetResponderBehaviour {
 
@@ -40,6 +43,12 @@ class KitchenHelperResponderBehaviour extends ContractNetResponderBehaviour {
         reply.setPerformative(ACLMessage.INFORM);
 
         this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.IDLE);
+        try {
+            reply.setContentObject(cfp.getContentObject());
+        } catch (IOException | UnreadableException e) {
+            e.printStackTrace();
+        }
+        this.getAgent().send(reply);
     }
 
 

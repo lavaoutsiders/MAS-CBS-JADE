@@ -2,29 +2,45 @@ package agents.behaviours;
 
 import agents.BaseAgent;
 import agents.ChefAgent;
+import com.sun.tools.javac.jvm.Items;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import main.MainController;
 import models.Description;
+import models.ItemsEnum;
 import models.OrderDescription;
 import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 import ui.StatusEnum;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehaviour {
 
-    private Set<TaskEnum> unfinishedTasks;
+    private final Set<TaskEnum> unfinishedTasks;
 
     public ChefAgentOrderResponderBehaviour(BaseAgent a, MessageTemplate mt, @NotNull MainController mainController) {
         super(a, mt, mainController);
         this.unfinishedTasks = new HashSet<>();
     }
 
+
+    public void finishTask(@NotNull TaskEnum task) {
+        this.unfinishedTasks.remove(task);
+    }
+
+    public boolean isAllSubtasksDone(){
+        return this.unfinishedTasks.size() == 0;
+    }
+
+    public boolean onlyPlatingLeft() {
+        return this.unfinishedTasks.size() == 1 && this.unfinishedTasks.contains(TaskEnum.PLATING);
+    }
 
     @Override
     public ChefAgent getAgent() {
@@ -46,6 +62,11 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
                 ChefAgentOrderResponderBehaviour.this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.IDLE);
                 ACLMessage reply = cfp.createReply();
                 reply.setPerformative(ACLMessage.INFORM);
+                try {
+                    reply.setContentObject(cfp.getContentObject());
+                } catch (IOException | UnreadableException e) {
+                    e.printStackTrace();
+                }
                 this.getAgent().send(reply);
             }
         });
@@ -64,16 +85,16 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
     }
 
     @Override
-    protected void handleWork(ACLMessage accept, Description description) {
+    protected void handleWork(ACLMessage cfp, Description description) {
         this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.WORKING);
         if (!(description instanceof OrderDescription)) return;
         long waitDuration;
         OrderDescription orderDescription = (OrderDescription) description;
         this.unfinishedTasks.addAll(orderDescription.getItem().getRequiredTasks());
-
+        this.unfinishedTasks.add(TaskEnum.WASH_DISH);
         TaskWorker taskWorker = new TaskWorker(new OrderDescription(orderDescription.getItem(),
                 (this.getAgent()).getCoordinate()),
-                this, accept);
+                this, cfp);
         taskWorker.executeTask();
 
         this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.IDLE);
