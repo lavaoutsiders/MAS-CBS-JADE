@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
-import jade.proto.ContractNetInitiator;
+import jade.proto.ContractNetResponder;
 import main.MainController;
 import models.Coordinate;
 import models.ItemsEnum;
@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import utils.DFUtils;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.StreamSupport;
+import java.util.Objects;
+import java.util.Vector;
 
 class OrderAgentInitiatorBehaviour extends ContractNetInitiatorBehaviour {
 
@@ -26,7 +26,7 @@ class OrderAgentInitiatorBehaviour extends ContractNetInitiatorBehaviour {
 
     @Override
     protected void handlePropose(ACLMessage propose, Vector acceptances) {
-        System.out.println("PROPOSE - Agent " + propose.getSender().getName() + " proposed with value: " + propose.getContent());
+        ((BaseAgent) this.getAgent()).getMainController().printLogLine("PROPOSE - Agent " + propose.getSender().getName() + " proposed with value: " + propose.getContent());
     }
 
     @Override
@@ -36,12 +36,16 @@ class OrderAgentInitiatorBehaviour extends ContractNetInitiatorBehaviour {
 
     @Override
     protected void handleRefuse(ACLMessage refuse) {
-        System.out.println("REFUSE - Agent " + refuse.getSender().getName() + " refused the task :( ");
+        ((BaseAgent) this.getAgent()).getMainController().printLogLine("REFUSE - Agent " + refuse.getSender().getName() + " refused the task :( ");
     }
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println("INFORM - Agent " + inform.getSender().getName() + " successfully performed the task");
+        if (inform.getContent().equals("Dispatched")) {
+            ((BaseAgent) this.getAgent()).getMainController().printLogLine("INFORM DISPATCHED - Agent " + inform.getSender().getName() + " dispatched the task");
+            return;
+        }
+        ((BaseAgent) this.getAgent()).getMainController().printLogLine("INFORM - Agent " +  inform.getSender().getName() + " successfully performed the task");
     }
 
 
@@ -70,6 +74,7 @@ public class OrderAgent extends BaseAgent implements IOrderAgent {
                 DFUtils.searchDF(TaskEnum.START_ORDER.toString(), OrderAgent.this))
                 .forEach(message::addReceiver);
         this.addBehaviour(new OrderAgentInitiatorBehaviour(this, message));
+
         System.out.println("Order agent submitted a new order with item " + itemsEnum.toString());
 
     }

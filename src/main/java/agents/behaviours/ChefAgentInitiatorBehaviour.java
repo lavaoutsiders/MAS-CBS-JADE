@@ -2,7 +2,6 @@ package agents.behaviours;
 
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
-import jade.proto.ContractNetInitiator;
 
 import java.util.Vector;
 

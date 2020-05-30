@@ -1,6 +1,5 @@
 package ui.elements;
 
-import models.TaskEnum;
 import ui.StatusEnum;
 
 import javax.swing.*;

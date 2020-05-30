@@ -3,7 +3,6 @@ package agents.behaviours;
 import agents.BaseAgent;
 import agents.ChefAgent;
 import exceptions.TaskNotDecomposableException;
-import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -66,8 +65,11 @@ public class ChefAgentTaskResponderBehaviour extends ContractNetResponderBehavio
     public void resumeWork(ACLMessage cfp) {
         this.getAgent().setWorkingStatus(false);
         this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.IDLE);
+        this.getAgent().getMainController().printLogLine("PERFORMED - "+ this.getAgent().getName() + " performed " + cfp.getContent() +
+                " for " + cfp.getSender().getName());
         ACLMessage reply = cfp.createReply();
         reply.setPerformative(ACLMessage.INFORM);
+        this.getAgent().send(reply);
     }
 
     @Override

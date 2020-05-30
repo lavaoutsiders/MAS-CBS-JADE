@@ -2,9 +2,7 @@ package agents;
 
 import agents.behaviours.ContractNetResponderBehaviour;
 import com.google.common.collect.Sets;
-import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
-import jade.domain.FIPAAgentManagement.FailureException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import main.MainController;
@@ -37,6 +35,8 @@ class KitchenHelperResponderBehaviour extends ContractNetResponderBehaviour {
     public void resumeWork(ACLMessage cfp) {
         this.getAgent().setWorkingStatus(false);
         ACLMessage reply = cfp.createReply();
+
+        this.getMainController().printLogLine( "PERFORMED - " +  this.getAgent().getName() + " washed an dish for " + cfp.getSender().getName());
         reply.setPerformative(ACLMessage.INFORM);
 
         this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.IDLE);

@@ -1,7 +1,5 @@
 package ui.elements;
 
-import ui.StatusEnum;
-
 import javax.swing.*;
 
 public class KitchenAgentButton extends AgentButton {
@@ -14,7 +12,7 @@ public class KitchenAgentButton extends AgentButton {
     }
 
     public static int getBoxWidth() {
-        return 70;
+        return 80;
     }
     public static int getBoxHeight() {
         return 50;

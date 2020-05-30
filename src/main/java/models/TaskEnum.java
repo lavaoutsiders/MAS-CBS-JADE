@@ -1,7 +1,6 @@
 package models;
 
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 

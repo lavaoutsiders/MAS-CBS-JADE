@@ -1,15 +1,11 @@
 package main;
 
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
-import exceptions.NoAssociatedUIElementException;
 import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
-import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
-import javafx.util.BuilderFactory;
-import models.TaskEnum;
+import org.jetbrains.annotations.NotNull;
 import ui.GUI;
 import ui.StatusEnum;
 import ui.elements.AgentButton;
@@ -60,5 +56,18 @@ public class MainControllerImpl implements MainController {
             return;
         }
         button.setStatus(state);
+    }
+
+    private GUI gui;
+
+    public void registerGUI(@NotNull GUI gui) {
+        this.gui = gui;
+    }
+    @Override
+    public void printLogLine(String logLine) {
+        if (this.gui != null) {
+            this.gui.addLogAreaLine(logLine + "\n");
+        }
+        System.out.println(logLine);
     }
 }

@@ -1,7 +1,10 @@
 package agents.behaviours;
 
 import agents.ChefAgent;
-import jade.core.behaviours.*;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.ParallelBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import models.OrderDescription;
@@ -20,11 +23,18 @@ public class TaskWorker {
     private ContractNetResponderBehaviour chefAgentResponderBehaviour;
     private ChefAgent chefAgent;
     private long waitTime;
+    private ACLMessage originCFP;
 
-    public TaskWorker(@NotNull OrderDescription orderDescription, @NotNull ContractNetResponderBehaviour chefAgentResponderBehaviour){
+    public TaskWorker(@NotNull OrderDescription orderDescription, @NotNull ContractNetResponderBehaviour chefAgentResponderBehaviour,
+            @NotNull ACLMessage cfp ){
         this.orderDescription = orderDescription;
         this.chefAgentResponderBehaviour = chefAgentResponderBehaviour;
         this.chefAgent = (ChefAgent) chefAgentResponderBehaviour.getAgent();
+        this.originCFP = cfp;
+    }
+
+    public ACLMessage getOriginCFP() {
+        return originCFP;
     }
 
     private Behaviour sliceFish() {
@@ -89,9 +99,10 @@ public class TaskWorker {
         // This step simulates the final preparation step
         sequentialBehaviour.addSubBehaviour(new WakerBehaviour(this.chefAgent, timeout ) {
             @Override
-            protected void onWake() {
-                System.out.println("Finished task"); // TODO
+            protected void onWake(){
+                chefAgentResponderBehaviour.resumeWork(getOriginCFP());
             }
+
         });
 
         this.chefAgent.addBehaviour(sequentialBehaviour);

@@ -1,8 +1,6 @@
 package ui.elements;
 
 
-import ui.StatusEnum;
-
 import javax.swing.*;
 
 public class OrderAgentButton extends AgentButton {
@@ -14,7 +12,7 @@ public class OrderAgentButton extends AgentButton {
 
 
     public static int getBoxLength(){
-        return 50;
+        return 60;
     }
 
 

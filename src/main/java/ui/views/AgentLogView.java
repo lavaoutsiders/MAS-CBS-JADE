@@ -1,7 +1,5 @@
 package ui.views;
 
-import agents.OrderAgent;
-import models.ItemsEnum;
 import org.jetbrains.annotations.NotNull;
 import sun.management.Agent;
 

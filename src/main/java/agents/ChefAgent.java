@@ -7,7 +7,10 @@ import exceptions.TaskNotDecomposableException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import main.MainController;
-import models.*;
+import models.AgentSupply;
+import models.Coordinate;
+import models.ItemsEnum;
+import models.TaskEnum;
 import org.jetbrains.annotations.NotNull;
 
 public class ChefAgent extends BaseAgent implements IChefAgent {

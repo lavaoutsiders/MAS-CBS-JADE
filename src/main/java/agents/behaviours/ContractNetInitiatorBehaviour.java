@@ -1,5 +1,6 @@
 package agents.behaviours;
 
+import agents.BaseAgent;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
@@ -22,8 +23,8 @@ public class ContractNetInitiatorBehaviour extends ContractNetInitiator {
                 .filter(msg-> msg.getPerformative() == ACLMessage.PROPOSE)
                 .min((msg1, msg2) -> (int) (Double.parseDouble(msg1.getContent()) - Double.parseDouble(msg2.getContent())));
         if (! bestOffer.isPresent()) {
-            System.out.println("!!! No agent is able to handle the order.");
-            // TODO: add to queue
+            ((BaseAgent) this.getAgent()).getMainController().printLogLine("!!! No agent is able to handle the order.");
+            //; TODO: add to queue
             return;
         }
         ACLMessage bestReply = bestOffer.get().createReply();

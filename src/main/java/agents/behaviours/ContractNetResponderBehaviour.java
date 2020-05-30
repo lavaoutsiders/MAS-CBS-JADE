@@ -1,9 +1,6 @@
 package agents.behaviours;
 
 import agents.BaseAgent;
-import agents.ChefAgent;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ResultTreeType;
-import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
@@ -13,7 +10,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetResponder;
 import main.MainController;
-import models.*;
+import models.Description;
 import org.jetbrains.annotations.NotNull;
 import ui.StatusEnum;
 
@@ -37,7 +34,7 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
 
-        System.out.println("Offer accepted for " + this.getAgent().getName());
+        ((BaseAgent) this.getAgent()).getMainController().printLogLine("Offer accepted for " + this.getAgent().getName());
         ACLMessage reply = accept.createReply();
         try {
             if (cfp.getContentObject() instanceof Description) {
@@ -66,7 +63,7 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
 
     @Override
     protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        System.out.println("Offer reject :( for " + this.getAgent().getName() );
+        ((BaseAgent) this.getAgent()).getMainController().printLogLine("Offer reject :( for " + this.getAgent().getName() );
     }
 
     @Override
@@ -95,7 +92,7 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
         Serializable result = null;
         try {
             result = cfp.getContentObject();
-            System.out.println("Agent " + this.getAgent().getName() + " received cfp for order with content " +
+            ((BaseAgent) this.getAgent()).getMainController().printLogLine("Agent " + this.getAgent().getName() + " received cfp for order with content " +
                     (result == null ? cfp.getContent() : result.toString()) );
         } catch (UnreadableException e) {
             e.printStackTrace();
@@ -109,7 +106,7 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
         }
         description = ((Description) result);
         double cost = calculateCost(description);
-        System.out.println("PROPOSE AGENT - Agent" + this.getAgent().getName() + " proposed with value " + cost);
+//        ((BaseAgent) this.getAgent()).getMainController().printLogLine("PROPOSE AGENT - Agent" + this.getAgent().getName() + " proposed with value " + cost);
         reply.setPerformative(ACLMessage.PROPOSE);
 
         reply.setContent(String.valueOf(cost));

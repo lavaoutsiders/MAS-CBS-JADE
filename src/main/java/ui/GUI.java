@@ -22,20 +22,36 @@ public class GUI {
 
     private JFrame mainFrame;
     private MainControllerImpl mainController;
+    private JTextArea logArea;
 
     public GUI(@NotNull MainControllerImpl mainController) {
         this.mainController = mainController;
+        mainController.registerGUI(this);
         JFrame mainFrame = new JFrame("Conveyor belt sushi multi-agent simulation");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        mainFrame.setSize(1000, 700);
+        mainFrame.setSize(1000, 830);
 
         // We are using absolute coordinates here
         mainFrame.setLayout(null);
         addOrderAgents(mainFrame, 100, 100);
         Map<KitchenAgentButton, Agent> agentButtonChefAgentMap = addKitchenAgents(mainFrame, 180, 180);
         mainFrame.setVisible(true);
+        this.logArea = new JTextArea();
+               this.logArea.setEditable(false); // set textArea non-editable
+        JScrollPane scrollPane = new JScrollPane(this.logArea);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setLocation(0, 550);
+        scrollPane.setSize(1000, 230);
+
+        mainFrame.add(scrollPane);
+
         this.mainFrame = mainFrame;
+    }
+
+    public void addLogAreaLine(String line) {
+        this.logArea.append(line);
     }
 
     private Map<KitchenAgentButton, Agent> addKitchenAgents(@NotNull JFrame mainFrame, int startX, int startY) {
@@ -51,8 +67,8 @@ public class GUI {
                 Agent agent;
                 String prefix;
                 int count;
-                Coordinate coordinate = new Coordinate(startX + i * KitchenAgentButton.getBoxWidth() * 2 ,
-                        startY + j * KitchenAgentButton.getBoxHeight() * 2);
+                Coordinate coordinate = new Coordinate(startX +  (int)(i * KitchenAgentButton.getBoxWidth() * 1.7) ,
+                        startY + (int)(j * KitchenAgentButton.getBoxHeight() * 1.6));
                 if (helperRobotColumn.contains(i)) {
                     agent = new KitchenHelperAgent(this.mainController, coordinate);
                     prefix = "Helper ";
@@ -79,7 +95,7 @@ public class GUI {
     }
 
     private void addOrderAgents(@NotNull JFrame mainFrame, int startX, int startY){
-        int totalRows = (mainFrame.getHeight() - 150) / (OrderAgentButton.getBoxLength() + 20 );
+        int totalRows = (mainFrame.getHeight() - 400) / (OrderAgentButton.getBoxLength() + 20 );
         int totalColumns = (mainFrame.getWidth() - 150) / (OrderAgentButton.getBoxLength() + 20);
         int count = 0;
         for (int i = 0; i <= totalColumns; i++) {
