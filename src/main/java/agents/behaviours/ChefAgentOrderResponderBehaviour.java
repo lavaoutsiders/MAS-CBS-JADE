@@ -27,27 +27,14 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
         this.workForDuration(cfp, TaskEnum.PLATING.getDuration());
     }
 
-    @Override
-    protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-        ACLMessage reply = super.handleAcceptProposal(cfp, propose, accept);
-        try {
-            if (cfp.getContentObject() instanceof Description) {
-                this.handleWork(accept, (Description) cfp.getContentObject());
-            }
-        } catch (UnreadableException e) {
-            e.printStackTrace();
-        }
-
-
-        return reply;
-    }
 
     @Override
     protected void handleWork(ACLMessage accept, Description description) {
         this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.WORKING);
         if (!(description instanceof OrderDescription)) return;
         long waitDuration;
-        TaskWorker taskWorker = new TaskWorker(new OrderDescription(((OrderDescription) description).getItem(), ((ChefAgent) this.getAgent()).getCoordinate()),
+        TaskWorker taskWorker = new TaskWorker(new OrderDescription(((OrderDescription) description).getItem(),
+                ((ChefAgent) this.getAgent()).getCoordinate()),
                 this);
         taskWorker.executeTask();
 

@@ -36,6 +36,7 @@ public abstract class ContractNetResponderBehaviour extends ContractNetResponder
 
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
+
         System.out.println("Offer accepted for " + this.getAgent().getName());
         ACLMessage reply = accept.createReply();
         try {
