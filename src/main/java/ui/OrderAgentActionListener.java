@@ -18,6 +18,7 @@ public class OrderAgentActionListener implements ActionListener {
         SelectItemView selectItemView = new SelectItemView(this.orderAgent);
         selectItemView.setVisible();
         orderAgentButton.setStatus(StatusEnum.WORKING);
+        orderAgentButton.setEnabled(false);
     }
 
 }

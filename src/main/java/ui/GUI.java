@@ -94,6 +94,7 @@ public class GUI {
         return result;
     }
 
+
     private void addOrderAgents(@NotNull JFrame mainFrame, int startX, int startY){
         int totalRows = (mainFrame.getHeight() - 400) / (OrderAgentButton.getBoxLength() + 20 );
         int totalColumns = (mainFrame.getWidth() - 150) / (OrderAgentButton.getBoxLength() + 20);

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ui.GUI;
 import ui.StatusEnum;
 import ui.elements.AgentButton;
+import ui.elements.OrderAgentButton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +57,9 @@ public class MainControllerImpl implements MainController {
             return;
         }
         button.setStatus(state);
+        if (button instanceof OrderAgentButton && state == StatusEnum.IDLE) {
+            button.setEnabled(true);
+        }
     }
 
     private GUI gui;

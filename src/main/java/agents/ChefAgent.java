@@ -51,7 +51,7 @@ public class ChefAgent extends BaseAgent implements IChefAgent {
                         } )
                 );
 
-                ACLMessage msg = blockingReceive(template, 40);
+                ACLMessage msg = blockingReceive(template, 20);
                 if (msg == null) return;
                 TaskDescription finishedTask = null;
                 try {

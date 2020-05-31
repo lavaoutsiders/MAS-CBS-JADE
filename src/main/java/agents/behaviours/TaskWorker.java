@@ -122,8 +122,6 @@ public class TaskWorker {
 
         Objects.requireNonNull(
                 DFUtils.searchDF(task.toString(), this.chefAgent))
-                .stream()
-                .filter(aid -> ! aid.equals(this.chefAgent.getAID()))
                 .forEach(message::addReceiver);
 
         return message;

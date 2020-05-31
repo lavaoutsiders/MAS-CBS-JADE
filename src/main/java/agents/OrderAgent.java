@@ -88,7 +88,8 @@ public class OrderAgent extends BaseAgent implements IOrderAgent {
                 if (finishedOrder == null){
                     return;
                 }
-
+                getMainController().printLogLine("FINISH - Order " + finishedOrder.getItem()
+                        + " is finished by " + OrderAgent.this.getName() );
                 getMainController().setUIComponentState(OrderAgent.this, StatusEnum.IDLE);
             }
         });
