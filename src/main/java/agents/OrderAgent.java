@@ -3,15 +3,16 @@ package agents;
 import agents.behaviours.ContractNetInitiatorBehaviour;
 import com.google.common.collect.Sets;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetResponder;
 import main.MainController;
-import models.Coordinate;
-import models.ItemsEnum;
-import models.OrderDescription;
-import models.TaskEnum;
+import models.*;
 import org.jetbrains.annotations.NotNull;
+import ui.StatusEnum;
 import utils.DFUtils;
 
 import java.io.IOException;
@@ -58,8 +59,41 @@ public class OrderAgent extends BaseAgent implements IOrderAgent {
     public OrderAgent(@NotNull MainController mainController, @NotNull Coordinate coordinate) {
         super(mainController, Sets.newHashSet(TaskEnum.RECEIVE_ORDER),
                 coordinate);
+        this.addBehaviour(new CyclicBehaviour() {
+            @Override
+            public void action() {
+                MessageTemplate template = MessageTemplate.and(
+                    getContractNetTemplate(ACLMessage.INFORM),
+                    new MessageTemplate((MessageTemplate.MatchExpression) aclMessage -> {
+                        try {
+                            return aclMessage != null && (aclMessage.getContentObject() != null && (aclMessage.getContentObject() instanceof OrderDescription));
+                        } catch (UnreadableException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    } )
+                );
 
+                ACLMessage msg = blockingReceive(template, 40);
+                if (msg == null) return;
+                OrderDescription finishedOrder = null;
+                try {
+                    if (!(msg.getContentObject() instanceof OrderDescription)){
+                        return;
+                    }
+                    finishedOrder = (OrderDescription) msg.getContentObject();
+                } catch (UnreadableException e) {
+                    e.printStackTrace();
+                }
+                if (finishedOrder == null){
+                    return;
+                }
+
+                getMainController().setUIComponentState(OrderAgent.this, StatusEnum.IDLE);
+            }
+        });
     }
+
 
     public void submitNewOrder(ItemsEnum itemsEnum) {
         ACLMessage message = new ACLMessage(ACLMessage.CFP);
