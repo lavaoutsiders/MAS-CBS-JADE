@@ -69,7 +69,20 @@ public class ChefAgentTaskResponderBehaviour extends ContractNetResponderBehavio
     public void resumeWork(ACLMessage cfp) {
         this.getAgent().setWorkingStatus(false);
         this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.IDLE);
-        this.getAgent().getMainController().printLogLine("PERFORMED - "+ this.getAgent().getName() + " performed " + cfp.getContent() +
+        String output = "";
+        try {
+            if (cfp.getContentObject() != null && cfp.getContentObject() instanceof TaskDescription) {
+                output += ((TaskDescription) cfp.getContentObject()).getTask().toString();
+            }
+            else {
+                output += "task";
+            }
+
+        } catch (UnreadableException e) {
+            e.printStackTrace();
+        }
+
+        this.getAgent().getMainController().printLogLine("PERFORMED - "+ this.getAgent().getName() + " performed " + output +
                 " for " + cfp.getSender().getName());
         ACLMessage reply = cfp.createReply();
         reply.setPerformative(ACLMessage.INFORM);

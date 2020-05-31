@@ -2,6 +2,7 @@ package agents.behaviours;
 
 import agents.BaseAgent;
 import agents.ChefAgent;
+import com.google.common.collect.Sets;
 import com.sun.tools.javac.jvm.Items;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPAAgentManagement.FailureException;
@@ -24,6 +25,7 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
 
     private final Set<TaskEnum> unfinishedTasks;
 
+    private ACLMessage originCFP;
     public ChefAgentOrderResponderBehaviour(BaseAgent a, MessageTemplate mt, @NotNull MainController mainController) {
         super(a, mt, mainController);
         this.unfinishedTasks = new HashSet<>();
@@ -42,6 +44,11 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
         return this.unfinishedTasks.size() == 1 && this.unfinishedTasks.contains(TaskEnum.PLATING);
     }
 
+    public boolean onlySushiAssemblyLeft() {
+        return this.unfinishedTasks.size()  == 2
+                && this.unfinishedTasks.containsAll(Sets.newHashSet(TaskEnum.PLATING, TaskEnum.MAKE_SUSHI));
+    }
+
     @Override
     public ChefAgent getAgent() {
         return (ChefAgent) super.getAgent();
@@ -52,10 +59,28 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
         return ! this.getAgent().getWorkingStatus();
     }
 
+    public ACLMessage getOriginCFP() {
+        return originCFP;
+    }
+
     @Override
     public void resumeWork(ACLMessage cfp) {
+        String  output = "";
+        long assemblyTime = 0;
+        try {
+            if (cfp.getContentObject() != null && cfp.getContentObject() instanceof OrderDescription) {
+                output  = ((OrderDescription) cfp.getContentObject()).getItem().toString();
+                if (((OrderDescription) cfp.getContentObject()).getItem().equals(ItemsEnum.SASHIMI)) {
+                    assemblyTime = TaskEnum.MAKE_SUSHI.getDuration();
+                }
+            }
+        } catch (UnreadableException e) {
+            e.printStackTrace();
+        }
+        this.getMainController().printLogLine("FINISHING ORDER - " + this.getAgent().getName()
+                + " is plating and assembling the order " + output);
         this.getMainController().setUIComponentState(this.getAgent(), StatusEnum.WORKING);
-        this.getAgent().addBehaviour(new WakerBehaviour(this.getAgent(), TaskEnum.PLATING.getDuration()) {
+        this.getAgent().addBehaviour(new WakerBehaviour(this.getAgent(), TaskEnum.PLATING.getDuration() + assemblyTime) {
             @Override
             protected void onWake() {
                 ChefAgentOrderResponderBehaviour.this.getAgent().setWorkingStatus(false);
@@ -78,6 +103,7 @@ public class ChefAgentOrderResponderBehaviour extends ContractNetResponderBehavi
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
 
         ACLMessage reply = super.handleAcceptProposal(cfp, propose, accept);
+        this.originCFP = cfp;
         reply.setContent("Dispatched");
 
         return reply;

@@ -4,13 +4,16 @@ import agents.behaviours.ChefAgentOrderResponderBehaviour;
 import agents.behaviours.ChefAgentTaskResponderBehaviour;
 import com.google.common.collect.Sets;
 import exceptions.TaskNotDecomposableException;
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import main.MainController;
 import models.*;
 import org.jetbrains.annotations.NotNull;
+import ui.StatusEnum;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -63,9 +66,8 @@ public class ChefAgent extends BaseAgent implements IChefAgent {
                     return;
                 }
                 chefAgentOrderResponderBehaviour.finishTask(finishedTask.getTask());
-                if (chefAgentOrderResponderBehaviour.onlyPlatingLeft()) {
-                    System.out.println("TODO!!!!");
-                    finishPlating();
+                if (chefAgentOrderResponderBehaviour.onlyPlatingLeft() || chefAgentOrderResponderBehaviour.onlySushiAssemblyLeft()) {
+                    chefAgentOrderResponderBehaviour.resumeWork(chefAgentOrderResponderBehaviour.getOriginCFP());
                 }
 
             }
@@ -73,8 +75,18 @@ public class ChefAgent extends BaseAgent implements IChefAgent {
         this.agentSupply = new AgentSupply();
     }
 
-    public void finishPlating() {
+    public void finishPlating(OrderDescription orderDescription, AID orderAgent) {
+        getMainController().printLogLine("FINALIZING ORDER - " + ChefAgent.this.getName()
+                + " is plating ");
+        this.getMainController().setUIComponentState(this, StatusEnum.WORKING);
+        this.addBehaviour(new WakerBehaviour(this, TaskEnum.PLATING.getDuration()) {
+            @Override
+            protected void onWake() {
+                getMainController().setUIComponentState(ChefAgent.this, StatusEnum.IDLE);
 
+
+            }
+        });
     }
 
     public AgentSupply getAgentSupply() {

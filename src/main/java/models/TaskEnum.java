@@ -7,7 +7,7 @@ import java.io.Serializable;
 public enum  TaskEnum implements Serializable {
 
     WARM_SOUP(15),
-    PLATING(1),
+    PLATING(3),
     CUT_FISH(10),
     KNEED_RICE(5),
     MAKE_SUSHI(8),
